@@ -1,5 +1,6 @@
 import { Route, Switch } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
+import FileLocationDescription from "./components/FileLocationDescription";
 
 import NotFound from "./components/NotFound";
 import History from "./pages/History";
@@ -14,6 +15,9 @@ function App() {
       <Switch>
         <Route exact path="/">
           <Introduction />
+        </Route>
+        <Route exact path="/description-about-browser-history-location">
+          <FileLocationDescription />
         </Route>
         <Route exact path="/browser-history/:id">
           <History />
