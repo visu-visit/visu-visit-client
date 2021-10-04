@@ -17,17 +17,11 @@
     "no-unused-vars": "warn",
     "quotes": ["error", "double"],
     "semi": ["error", "always"],
-    "object-curly-newline": [
-      "error",
-      {
-        "ObjectExpression": "always",
-        "ObjectPattern": { "multiline": true },
-        "ImportDeclaration": { "multiline": true },
-        "ExportDeclaration": { "multiline": true }
-      }
-    ],
+    "object-curly-newline": ["error"],
     "import/extensions": "off",
     "import/no-unresolved": "off",
-    "react/jsx-filename-extension": ["warn", { "extensions": ["tsx"] }]
+    "import/prefer-default-export": "off",
+    "react/jsx-filename-extension": ["warn", { "extensions": ["tsx"] }],
+    "operator-linebreak": ["error", "after"]
   }
 }
