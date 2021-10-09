@@ -1,36 +1,51 @@
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { IBrowserHistory } from "../../types/history";
 /* eslint-disable no-param-reassign */
 
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-
-import { IBrowserHistory } from "../../types/history";
-import { RootState } from "../../app/store";
+const INITIAL_BROWSER_HISTORY_ID = "initialization";
 
 const initialState: IBrowserHistory = {
-  nanoId: "",
+  nanoId: INITIAL_BROWSER_HISTORY_ID,
   totalVisits: [
     {
-      visitId: -1,
+      visitId: 0,
       visitTime: "",
-      visitUrl: "http://www.naver.com",
-      urlVisitCount: 0,
-      visitTitle: "",
-      visitDuration: "",
-      lastVisitTime: "",
-      transition: "Link",
-      fromVisitId: 0,
-      fromVisitTime: "",
-      fromVisitUrl: "",
-      fromVisitTitle: "",
+      targetUrl: "http://www.naver.com",
+      targetUrlVisitCount: 0,
+      visitDuration: 1000,
+      transitionType: "Link",
+      sourceUrl: "http://www.google.com",
+    },
+    {
+      visitId: 1,
+      visitTime: "",
+      targetUrl: "http://www.google.com",
+      targetUrlVisitCount: 0,
+      visitDuration: 1000,
+      transitionType: "Link",
+      sourceUrl: "http://www.naver.com",
     },
   ],
   domainNodes: [
     {
-      domainName: "",
-      nanoId: "",
-      position: {
-        x: 0,
-        y: 0,
-      },
+      name: "http://www.naver.com",
+      index: 0,
+      x: 500,
+      y: 300,
+      fx: 300,
+      fy: 300,
+      visitCount: 1,
+      visitDuration: 0,
+    },
+    {
+      name: "http://www.google.com",
+      index: 1,
+      x: 500,
+      y: 300,
+      fx: 500,
+      fy: 500,
+      visitCount: 1,
+      visitDuration: 0,
     },
   ],
 };
@@ -51,10 +66,5 @@ export const historySlice = createSlice({
 });
 
 export const { updateBrowserHistory, changePosition } = historySlice.actions;
-
-// The function below is called a selector and allows us to select a value from
-// the state. Selectors can also be defined inline where they're used instead of
-// in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
-export const selectHistory = (state: RootState) => state.history;
 
 export default historySlice.reducer;
