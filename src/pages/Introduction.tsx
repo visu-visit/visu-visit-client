@@ -7,7 +7,7 @@ import { postHistoryFile } from "../api";
 import ErrorMessage from "../components/shared/ErrorMessage";
 import Title from "../components/shared/Title";
 import { updateBrowserHistory } from "../features/history/historySlice";
-import { IBrowserHistory, IPostHistoryResponse } from "../types/history";
+import { IPostHistoryResponse } from "../types/history";
 
 const Wrapper = styled.div`
   position: relative;
@@ -33,6 +33,7 @@ const Section = styled.section`
 
 const SLink = styled(Link)`
   display: block;
+  text-decoration: underline;
   margin: 10px 0 10px 0;
 `;
 
@@ -69,8 +70,8 @@ export default function Introduction() {
       try {
         const response: IPostHistoryResponse = await postHistoryFile(file);
 
-        if (response.result === "ok") {
-          const browserHistory = response.data as IBrowserHistory;
+        if (response.result === "ok" && response.data) {
+          const browserHistory = response.data;
 
           dispatch(updateBrowserHistory(browserHistory));
           history.push(`/browser-history/${browserHistory.nanoId}`);

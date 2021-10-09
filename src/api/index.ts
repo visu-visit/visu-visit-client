@@ -1,5 +1,4 @@
-import { nanoid } from "nanoid";
-import { IPostHistoryResponse } from "../types/history";
+import { IPostHistoryResponse, IHistoryFormData } from "../types/history";
 
 export const postHistoryFile = async (
   file: File,
@@ -21,12 +20,12 @@ export const postHistoryFile = async (
 
 export const getHistory = async ({
   id,
-  start,
-  end,
-  domain,
+  formData,
 }: {
-  [key: string]: string;
+  id: string;
+  formData: IHistoryFormData;
 }): Promise<IPostHistoryResponse> => {
+  const { start, end, domain } = formData;
   const url = new URL(
     `${process.env.REACT_APP_SERVER_URL}/browser-history/${id}`,
   );

@@ -13,3 +13,11 @@ export const URL_TRANSITION_TYPES: UrlTransition[] = [
   "Keyword",
   "Keyword_Generated",
 ];
+
+export const NODE_COLORS = [
+  "lightgreen",
+  "lightpink",
+  "lightcyan",
+  "lightgoldenrodyellow",
+  "lightseagreen",
+];
