@@ -1,9 +1,13 @@
 import { useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Link, useHistory } from "react-router-dom";
 import styled from "styled-components";
 
 import { postHistoryFile } from "../api";
+import ErrorMessage from "../components/shared/ErrorMessage";
 import Title from "../components/shared/Title";
+import { updateBrowserHistory } from "../features/history/historySlice";
+import { IPostHistoryResponse } from "../types/history";
 
 const Wrapper = styled.div`
   position: relative;
@@ -29,6 +33,7 @@ const Section = styled.section`
 
 const SLink = styled(Link)`
   display: block;
+  text-decoration: underline;
   margin: 10px 0 10px 0;
 `;
 
@@ -50,14 +55,11 @@ const Input = styled.input`
   display: none;
 `;
 
-const ErrorMessage = styled.div`
-  color: red;
-  margin: 10px 0 10px 0;
-`;
-
 export default function Introduction() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const dispatch = useDispatch();
+  const history = useHistory();
 
   const handleUploadFile = async () => {
     setErrorMessage("");
@@ -66,10 +68,20 @@ export default function Introduction() {
 
     if (file) {
       try {
-        const response = await postHistoryFile(file);
-        console.log("response", response);
-      } catch (error) {
-        console.log("error", error);
+        const response: IPostHistoryResponse = await postHistoryFile(file);
+
+        if (response.result === "ok" && response.data) {
+          const browserHistory = response.data;
+
+          dispatch(updateBrowserHistory(browserHistory));
+          history.push(`/browser-history/${browserHistory.nanoId}`);
+        }
+
+        if (response.error) {
+          setErrorMessage(response.error.message);
+        }
+      } catch (error: any) {
+        console.log("error", error.message);
         setErrorMessage("히스토리 파일 업로드에 실패했습니다.");
       }
     }

@@ -1,12 +1,12 @@
 import { Route, Switch } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
-import FileLocationDescription from "./components/FileLocationDescription";
+import FileLocationDescription from "../pages/FileLocationDescription";
 
-import NotFound from "./components/NotFound";
-import History from "./pages/History";
-import Introduction from "./pages/Introduction";
-import GlobalStyles from "./styles/GlobalStyles";
-import { theme } from "./styles/theme";
+import NotFound from "../components/NotFound";
+import History from "../pages/History";
+import Introduction from "../pages/Introduction";
+import GlobalStyles from "../styles/GlobalStyles";
+import { theme } from "../styles/theme";
 
 function App() {
   return (

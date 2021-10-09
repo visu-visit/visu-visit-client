@@ -7,7 +7,7 @@ const color = {
 };
 
 const boxShadow =
-  "0 4px 20px 0 rgb(0 0 0 / 14%), 0 7px 10px -5px rgb(233 30 99 / 40%)";
+  "0 4px 20px 0 rgb(0 0 0 / 14%), 0 7px 10px -5px rgb(128 128 128 / 40%)";
 
 const gradient = {
   orange: "linear-gradient(60deg,#ffa726,#fb8c00)",

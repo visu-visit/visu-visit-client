@@ -17,11 +17,13 @@
     "no-unused-vars": "warn",
     "quotes": ["error", "double"],
     "semi": ["error", "always"],
-    "object-curly-newline": ["error"],
+    "object-curly-newline": ["off"],
     "import/extensions": "off",
     "import/no-unresolved": "off",
     "import/prefer-default-export": "off",
     "react/jsx-filename-extension": ["warn", { "extensions": ["tsx"] }],
-    "operator-linebreak": ["error", "after"]
+    "operator-linebreak": ["error", "after"],
+    "implicit-arrow-linebreak": "off",
+    "no-confusing-arrow": "off"
   }
 }
