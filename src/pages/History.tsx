@@ -1,6 +1,6 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { getHistory } from "../api";
 import DirectedGraph from "../components/DirectedGraph";
@@ -12,7 +12,6 @@ import {
   IHistoryFormData,
   IPostHistoryResponse,
 } from "../types/history";
-import makeLinks from "../util/history/makeLinks";
 
 const Wrapper = styled.div`
   display: flex;
@@ -28,6 +27,11 @@ const Form = styled.form`
 const HistoryTitle = styled(Title)`
   font-size: 30px;
   align-items: center;
+
+  a {
+    text-decoration: none;
+    color: black;
+  }
 `;
 
 const Fieldset = styled.fieldset`
@@ -90,13 +94,12 @@ export default function History() {
 
     try {
       const response: IPostHistoryResponse = await getHistory({
-        ...formData,
+        formData,
         id,
       });
 
       if (response.result === "ok") {
         const browserHistory = response.data as IBrowserHistory;
-        const links = makeLinks(browserHistory.totalVisits);
 
         dispatch(updateBrowserHistory(browserHistory));
       }
@@ -117,7 +120,9 @@ export default function History() {
   return (
     <Wrapper>
       <Form onSubmit={handleSubmit}>
-        <HistoryTitle>MY WEB HISTORY MAP</HistoryTitle>
+        <HistoryTitle>
+          <Link to="/">MY WEB HISTORY MAP</Link>
+        </HistoryTitle>
         <Fieldset>
           <Label htmlFor="start">
             Start Date
