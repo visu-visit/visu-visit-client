@@ -1,3 +1,4 @@
+import { nanoid } from "nanoid";
 import { IPostHistoryResponse, IHistoryFormData } from "../types/history";
 
 export const postHistoryFile = async (
