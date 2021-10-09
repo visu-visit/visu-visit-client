@@ -1,6 +1,7 @@
+import { Link } from "react-router-dom";
 import styled from "styled-components";
-import SubTitle from "./shared/SubTitle";
-import Title from "./shared/Title";
+import SubTitle from "../components/shared/SubTitle";
+import Title from "../components/shared/Title";
 
 const Wrapper = styled.div`
   display: flex;
@@ -36,7 +37,7 @@ export default function FileLocationDescription() {
       <Title>Where Is My History ?</Title>
       <Section>
         <SubTitle>
-          {"1. Title "}
+          {"1. Type "}
           <Code>Chrome://version</Code>
           {" on your browser address"}
         </SubTitle>
@@ -65,6 +66,13 @@ export default function FileLocationDescription() {
             src="images/fileLocationDescription/chrome-version.png"
           />
         </Paragraph>
+      </Section>
+      <Section>
+        <SubTitle>
+          <Link style={{ textDecoration: "underline" }} to="/">
+            4. Upload Your “History” File
+          </Link>
+        </SubTitle>
       </Section>
     </Wrapper>
   );

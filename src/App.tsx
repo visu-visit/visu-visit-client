@@ -1,6 +1,6 @@
 import { Route, Switch } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
-import FileLocationDescription from "./components/FileLocationDescription";
+import FileLocationDescription from "./pages/FileLocationDescription";
 
 import NotFound from "./components/NotFound";
 import History from "./pages/History";
