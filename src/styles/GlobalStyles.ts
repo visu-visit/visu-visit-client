@@ -14,6 +14,11 @@ const GlobalStyles = createGlobalStyle`
     #root {
       height: 100%;
     }
+
+    a {
+      text-decoration: none;
+      color: black;
+    }
   }
 `;
 
