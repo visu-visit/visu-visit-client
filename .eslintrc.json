@@ -22,8 +22,9 @@
     "import/no-unresolved": "off",
     "import/prefer-default-export": "off",
     "react/jsx-filename-extension": ["warn", { "extensions": ["tsx"] }],
-    "operator-linebreak": ["error", "after"],
     "implicit-arrow-linebreak": "off",
-    "no-confusing-arrow": "off"
+    "no-confusing-arrow": "off",
+    "function-paren-newline": "off",
+    "operator-linebreak": "off"
   }
 }
