@@ -28,6 +28,8 @@ export interface IVisit {
 }
 
 export interface INodePosition {
+  x?: number;
+  y?: number;
   vx?: number;
   vy?: number;
   fx?: number;
@@ -36,11 +38,12 @@ export interface INodePosition {
 
 export interface IDomainNode extends INodePosition {
   name: string;
-  index: number;
-  x: number;
-  y: number;
+  index?: number;
+  memo?: string;
+  color?: string;
   visitCount: number;
   visitDuration: number;
+  lastVisitTime: string | null;
 }
 
 export interface IDomainLink {
@@ -61,8 +64,14 @@ export interface IBrowserHistory {
   domainNodes: IDomainNode[] | [];
 }
 
-export interface IPostHistoryResponse {
+export interface IHistoryApiResponse {
   result: "ok" | "error";
   data?: IBrowserHistory;
   error?: { code: number; message: string };
+}
+
+export interface IClickedNode {
+  top: number;
+  left: number;
+  node: IDomainNode;
 }
