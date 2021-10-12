@@ -1,16 +1,23 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useHistory } from "react-router-dom";
 import styled from "styled-components";
 
-import { fetchHistory } from "../api";
+import { RiSave3Fill, RiDeleteBin6Fill, RiQuestionLine } from "react-icons/ri";
+import { BiCopy } from "react-icons/bi";
+import { BsFillShareFill } from "react-icons/bs";
+import { INITIAL_BROWSER_HISTORY_ID, updateBrowserHistory } from "../features/history/historySlice";
+import { IBrowserHistory, IHistoryFormData, IHistoryApiResponse } from "../types/history";
+import { deleteHistory, fetchHistory, saveHistory } from "../api";
 import { RootState } from "../app/store";
 import DirectedGraph from "../components/DirectedGraph";
+import Aside from "../components/shared/Aside";
 import ErrorMessage from "../components/shared/ErrorMessage";
 import Loading from "../components/shared/Loading";
 import Title from "../components/shared/Title";
-import { updateBrowserHistory } from "../features/history/historySlice";
-import { IBrowserHistory, IHistoryFormData, IHistoryApiResponse } from "../types/history";
+import Modal from "../components/shared/Modal";
+import Instruction from "../components/Instruction";
+import { ASIDE_BUTTON_KOREAN } from "../constants/message";
 
 const Wrapper = styled.div`
   display: flex;
@@ -56,7 +63,7 @@ const Input = styled.input`
   font-weight: 200;
 `;
 
-const Button = styled.button`
+const SearchButton = styled.button`
   width: 150px;
   height: 40px;
   margin-left: auto;
@@ -71,6 +78,40 @@ const Button = styled.button`
   font-size: 20px;
 `;
 
+const AsideButton = styled.button`
+  width: 50px;
+  height: 50px;
+  background: none;
+  border: 0;
+
+  &:hover {
+    background-color: lightgray;
+    border-radius: 10px;
+  }
+`;
+
+const Share = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 600px;
+  height: 100px;
+  background-color: white;
+  transform: translate(-50%, -50%);
+  border-radius: 20px;
+  gap: 10px;
+
+  > svg {
+    padding: 5px;
+
+    &:hover {
+      cursor: pointer;
+      background-color: lightgray;
+      border-radius: 5px;
+    }
+  }
+`;
+
 const INITIAL_HISTORY_FORM_DATA = {
   start: "",
   end: "",
@@ -78,11 +119,16 @@ const INITIAL_HISTORY_FORM_DATA = {
 };
 
 export default function History() {
-  const historyId = useSelector<RootState, unknown>(({ history }) => history.nanoId);
+  const browserHistoryData = useSelector<RootState, IBrowserHistory>(({ history }) => history);
+  const historyId = useSelector<RootState, string>(({ history }) => history.nanoId);
+
   const [formData, setFormData] = useState<IHistoryFormData>(INITIAL_HISTORY_FORM_DATA);
   const { id } = useParams<{ id: string }>();
   const [errorMessage, setErrorMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isShareVisible, setIsShareVisible] = useState(false);
+  const [isHowToVisible, setIsHowToVisible] = useState(false);
+  const history = useHistory();
   const dispatch = useDispatch();
 
   const handleFormChange = ({ target: { name, value } }: ChangeEvent<HTMLInputElement>) => {
@@ -92,6 +138,7 @@ export default function History() {
   const getHistoryData = async () => {
     try {
       setIsLoading(true);
+
       const response: IHistoryApiResponse = await fetchHistory({
         formData,
         id,
@@ -114,8 +161,39 @@ export default function History() {
   };
 
   useEffect(() => {
-    getHistoryData();
+    if (historyId === INITIAL_BROWSER_HISTORY_ID) {
+      getHistoryData();
+    }
   }, [historyId]);
+
+  const handleClickAsideButton = async (event: any) => {
+    const { name }: { name: "save" | "share" | "delete" | "howTo" } = event.target.dataset;
+
+    if (name === "save" || name === "delete") {
+      try {
+        setIsLoading(true);
+
+        if (name === "save") {
+          await saveHistory({ id: historyId, history: browserHistoryData });
+        } else if (name === "delete") {
+          await deleteHistory({ id: historyId });
+          history.push("/");
+        }
+      } catch (error: any) {
+        setErrorMessage(
+          `히스토리를 ${ASIDE_BUTTON_KOREAN[name]}하는 과정에서 에러가 발생했습니다.`,
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    if (name === "share") {
+      setIsShareVisible(true);
+    } else if (name === "howTo") {
+      setIsHowToVisible(true);
+    }
+  };
 
   const { start, end, domain } = formData;
   const isFormSubmitActive: boolean = Boolean(
@@ -169,14 +247,46 @@ export default function History() {
             />
           </Label>
         </Fieldset>
-        <Button disabled={!isFormSubmitActive} type="submit">
+        <SearchButton disabled={!isFormSubmitActive} type="submit">
           Search
-        </Button>
+        </SearchButton>
       </Form>
 
-      {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+      <Aside onClick={handleClickAsideButton} direction="right">
+        <AsideButton data-name="save">
+          <RiSave3Fill data-name="save" size={30} />
+          Save
+        </AsideButton>
+        <AsideButton data-name="share">
+          <BsFillShareFill data-name="share" size={25} />
+          Share
+        </AsideButton>
+        <AsideButton data-name="delete">
+          <RiDeleteBin6Fill data-name="delete" size={30} />
+          Delete
+        </AsideButton>
+        <AsideButton data-name="howTo" style={{ marginTop: "auto" }}>
+          <RiQuestionLine data-name="howTo" size={30} />
+          HowTo
+        </AsideButton>
+      </Aside>
+
+      {isShareVisible && (
+        <Modal handleClose={() => setIsShareVisible(false)}>
+          <Share>
+            {window.location.href}
+            <BiCopy size={20} />
+          </Share>
+        </Modal>
+      )}
+      {isHowToVisible && (
+        <Modal handleClose={() => setIsHowToVisible(false)}>
+          <Instruction />
+        </Modal>
+      )}
       {isLoading && <Loading />}
-      {!errorMessage && !isLoading && <DirectedGraph />}
+      {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+      {!errorMessage && <DirectedGraph />}
     </Wrapper>
   );
 }

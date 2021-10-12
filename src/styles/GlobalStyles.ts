@@ -19,6 +19,12 @@ const GlobalStyles = createGlobalStyle`
       text-decoration: none;
       color: black;
     }
+
+    button {
+      &:hover {
+        cursor: pointer;
+      }
+    }
   }
 `;
 

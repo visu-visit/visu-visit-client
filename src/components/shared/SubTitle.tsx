@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const SubTitle = styled.h1`
+const SubTitle = styled.h2`
   font-family: Montserrat;
   font-size: 50px;
   font-weight: 100;
