@@ -11,6 +11,7 @@ import { zoom } from "d3-zoom";
 import { drag } from "d3-drag";
 
 import { RootState } from "../app/store";
+import { changeNode } from "../features/history/historySlice";
 import { IClickedNode, IDomainLink, IDomainNode, IVisit } from "../types/history";
 import { DEFAULT_STROKE_WIDTH, URL_TRANSITION_TYPES } from "../constants/history";
 import Modal from "./shared/Modal";
@@ -27,7 +28,6 @@ import {
   makeGraphData,
   removeSpecialCases,
 } from "../util/history";
-import { changeNode } from "../features/history/historySlice";
 
 const Wrapper = styled.div`
   margin: 20px;
@@ -51,12 +51,12 @@ const color = scaleOrdinal(URL_TRANSITION_TYPES, schemeCategory10);
 const INITIAL_CLICKED_NODE = { top: 0, left: 0, node: {} as IDomainNode };
 
 export default function DirectedGraph() {
-  const totalVisits = useSelector<RootState, IVisit[]>(({ history }) => history.totalVisits);
   const domainNodes = useSelector<RootState, IDomainNode[]>(({ history }) => history.domainNodes);
-  const svgRef = useRef<SVGSVGElement>(null);
-  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const totalVisits = useSelector<RootState, IVisit[]>(({ history }) => history.totalVisits);
   const [clickedNode, setClickedNode] = useState<IClickedNode>(INITIAL_CLICKED_NODE);
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [zoomTransform, setZoomTransform] = useState<any>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
   const dispatch = useDispatch();
 
   const handleCloseModal: () => void = () => {
@@ -151,6 +151,7 @@ export default function DirectedGraph() {
       .selectAll("g")
       .data<IDomainNode>(nodes)
       .join("g")
+      .style("cursor", "pointer")
       .attr("class", "history-node")
       .attr("id", (domainNode) => removeSpecialCases(domainNode.name));
 
@@ -204,6 +205,8 @@ export default function DirectedGraph() {
       delete domainNode.fx;
       delete domainNode.fy;
 
+      dispatch(changeNode(domainNode));
+
       simulation.alpha(1).restart();
     };
 
@@ -224,24 +227,23 @@ export default function DirectedGraph() {
           radius = convertToRadius(visitCount);
         }
 
-        return getArrowPosition(domainLink, radius);
+        const d = getArrowPosition(domainLink, radius);
+
+        return d;
       });
 
       nodeGroup.attr("transform", (domainNode) => `translate(${domainNode.x},${domainNode.y})`);
     };
 
     simulation.on("tick", handleTick);
-  }, [totalVisits, domainNodes]);
+  }, [totalVisits]);
 
   return (
     <Wrapper>
       <Board ref={svgRef} />
       {isModalVisible && (
         <Modal
-          position={{
-            top: clickedNode.top,
-            left: clickedNode.left,
-          }}
+          position={{ top: `${clickedNode.top}px`, left: `${clickedNode.left}px` }}
           handleClose={handleCloseModal}
         >
           <NodeDetail node={clickedNode.node} handleClose={handleCloseModal} />

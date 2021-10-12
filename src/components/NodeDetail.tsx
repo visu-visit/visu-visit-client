@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+
 import { ChangeEvent, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
@@ -6,6 +8,7 @@ import { BiTimeFive, BiPencil, BiLinkExternal } from "react-icons/bi";
 import { AiOutlineNumber } from "react-icons/ai";
 import { FaCheck } from "react-icons/fa";
 
+import { select } from "d3-selection";
 import { RootState } from "../app/store";
 import { changeNodeColor, changeNodeMemo, deleteNode } from "../features/history/historySlice";
 import flexCenter from "../styles/flexCenter";
@@ -13,6 +16,7 @@ import { IDomainNode, IVisit } from "../types/history";
 import { NODE_COLORS } from "../constants/history";
 import Tooltip from "./shared/Tooltip";
 import Button from "./shared/Button";
+import { removeSpecialCases } from "../util/history";
 
 const Wrapper = styled.div`
   position: inherit;
@@ -151,20 +155,26 @@ const MINUTES_LIMIT = 10000;
 
 export default function NodeDetail({ node, handleClose }: NodeDetailProps) {
   const totalVisits = useSelector<RootState, IVisit[]>(({ history }) => history.totalVisits);
-  const [memo, setMemo] = useState<string>(node.memo || "");
+  const currentNode = useSelector<RootState, IDomainNode>(({ history: { domainNodes } }) => {
+    const targetIndex = domainNodes.findIndex((domainNode) => domainNode.name === node.name);
+
+    return domainNodes[targetIndex];
+  });
+  const [memo, setMemo] = useState<string>(currentNode.memo || "");
   const [isMemoModifying, setIsMemoModifying] = useState(false);
   const dispatch = useDispatch();
 
-  const domainName = node.name;
+  const domainName = currentNode.name;
+  const circleSelected = select(`#${removeSpecialCases(domainName)}`).select("circle");
+
   const mapUrl = ({ targetUrl, sourceUrl }: IVisit) =>
     targetUrl.includes(domainName) && sourceUrl ? sourceUrl : targetUrl;
   const filterByDomain = ({ targetUrl, sourceUrl }: IVisit) =>
     targetUrl.includes(domainName) || (sourceUrl && sourceUrl.includes(domainName));
   const relatedUrls = [...new Set<string>(totalVisits.filter(filterByDomain).map(mapUrl))];
-  const visitDuration = Math.ceil((node.visitDuration / 60) * 10) / 10;
+  const visitDuration = Math.ceil((currentNode.visitDuration / 60) * 10) / 10;
 
   const handleImageError = (event: any) => {
-    // eslint-disable-next-line no-param-reassign
     event.target.src = DEFAULT_DOMAIN_IMAGE_URL;
   };
 
@@ -179,6 +189,7 @@ export default function NodeDetail({ node, handleClose }: NodeDetailProps) {
     if (dataset.name === "memo") {
       setIsMemoModifying(true);
     } else if (dataset.name === "color") {
+      circleSelected.attr("fill", dataset.color);
       dispatch(changeNodeColor({ domainName, color: dataset.color }));
     } else if (dataset.name === "save") {
       dispatch(changeNodeMemo({ memo, domainName }));
