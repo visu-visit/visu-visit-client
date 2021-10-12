@@ -1,4 +1,5 @@
 import { nanoid } from "nanoid";
+import { IBrowserHistory } from "../types/history.d";
 import { IHistoryApiResponse, IHistoryFormData } from "../types/history";
 
 export const postHistoryFile = async (file: File): Promise<IHistoryApiResponse> => {
@@ -35,6 +36,34 @@ export const fetchHistory = async ({
   }
 
   const response = await fetch(url.toString());
+
+  return response.json();
+};
+
+export const deleteHistory = async ({ id }: { id: string }): Promise<IHistoryApiResponse> => {
+  const url = new URL(`${process.env.REACT_APP_SERVER_URL}/browser-history/${id}`);
+
+  const response = await fetch(url.toString(), { method: "DELETE" });
+
+  return response.json();
+};
+
+export const saveHistory = async ({
+  id,
+  history,
+}: {
+  id: string;
+  history: IBrowserHistory;
+}): Promise<IHistoryApiResponse> => {
+  const url = new URL(`${process.env.REACT_APP_SERVER_URL}/browser-history/${id}`);
+
+  const response = await fetch(url.toString(), {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(history),
+  });
 
   return response.json();
 };
