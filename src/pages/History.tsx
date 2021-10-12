@@ -1,17 +1,16 @@
-import { ChangeEvent, FormEvent, useState } from "react";
-import { useDispatch } from "react-redux";
+import { ChangeEvent, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { getHistory } from "../api";
+
+import { fetchHistory } from "../api";
+import { RootState } from "../app/store";
 import DirectedGraph from "../components/DirectedGraph";
 import ErrorMessage from "../components/shared/ErrorMessage";
+import Loading from "../components/shared/Loading";
 import Title from "../components/shared/Title";
 import { updateBrowserHistory } from "../features/history/historySlice";
-import {
-  IBrowserHistory,
-  IHistoryFormData,
-  IPostHistoryResponse,
-} from "../types/history";
+import { IBrowserHistory, IHistoryFormData, IHistoryApiResponse } from "../types/history";
 
 const Wrapper = styled.div`
   display: flex;
@@ -66,34 +65,34 @@ const Button = styled.button`
   border: 0;
   border-radius: 10px;
   box-shadow: ${({ theme }) => theme.boxShadow};
-  background: ${({ theme, disabled }) =>
-    disabled ? "lightgray" : theme.gradient.orange};
+  background: ${({ theme, disabled }) => (disabled ? "lightgray" : theme.gradient.orange)};
   font-family: Montserrat;
   font-weight: 200;
   font-size: 20px;
 `;
 
+const INITIAL_HISTORY_FORM_DATA = {
+  start: "",
+  end: "",
+  domain: "",
+};
+
 export default function History() {
-  const [formData, setFormData] = useState<IHistoryFormData>({
-    start: "",
-    end: "",
-    domain: "",
-  });
+  const historyId = useSelector<RootState, unknown>(({ history }) => history.nanoId);
+  const [formData, setFormData] = useState<IHistoryFormData>(INITIAL_HISTORY_FORM_DATA);
   const { id } = useParams<{ id: string }>();
   const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
 
-  const handleFormChange = ({
-    target: { name, value },
-  }: ChangeEvent<HTMLInputElement>) => {
+  const handleFormChange = ({ target: { name, value } }: ChangeEvent<HTMLInputElement>) => {
     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
   };
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
+  const getHistoryData = async () => {
     try {
-      const response: IPostHistoryResponse = await getHistory({
+      setIsLoading(true);
+      const response: IHistoryApiResponse = await fetchHistory({
         formData,
         id,
       });
@@ -108,18 +107,30 @@ export default function History() {
         setErrorMessage(response.error.message);
       }
     } catch (error: any) {
-      console.log("error", error.message);
       setErrorMessage("히스토리 파일을 가져오는데 실패했습니다.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const { start, end } = formData;
-  const isFormSubmitActive: boolean =
-    new Date(start).getTime() <= new Date(end).getTime();
+  useEffect(() => {
+    getHistoryData();
+  }, [historyId]);
+
+  const { start, end, domain } = formData;
+  const isFormSubmitActive: boolean = Boolean(
+    new Date(start).getTime() <= new Date(end).getTime() || (!start && !end && domain),
+  );
 
   return (
     <Wrapper>
-      <Form onSubmit={handleSubmit}>
+      <Form
+        onSubmit={(event) => {
+          event.preventDefault();
+
+          getHistoryData();
+        }}
+      >
         <HistoryTitle>
           <Link to="/">MY WEB HISTORY MAP</Link>
         </HistoryTitle>
@@ -162,11 +173,10 @@ export default function History() {
           Search
         </Button>
       </Form>
-      {errorMessage ? (
-        <ErrorMessage>{errorMessage}</ErrorMessage>
-      ) : (
-        <DirectedGraph />
-      )}
+
+      {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+      {isLoading && <Loading />}
+      {!errorMessage && !isLoading && <DirectedGraph />}
     </Wrapper>
   );
 }

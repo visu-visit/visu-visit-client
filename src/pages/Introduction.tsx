@@ -1,13 +1,13 @@
 import { useRef, useState } from "react";
-import { useDispatch } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
 
-import { postHistoryFile } from "../api";
+import { IHistoryApiResponse } from "../types/history";
+import { updateBrowserHistory } from "../features/history/historySlice";
 import ErrorMessage from "../components/shared/ErrorMessage";
 import Title from "../components/shared/Title";
-import { updateBrowserHistory } from "../features/history/historySlice";
-import { IPostHistoryResponse } from "../types/history";
+import { postHistoryFile } from "../api";
 
 const Wrapper = styled.div`
   position: relative;
@@ -49,6 +49,11 @@ const Label = styled.label`
   border-radius: 10px;
   box-shadow: ${({ theme }) => theme.boxShadow};
   font-size: 50px;
+
+  &:hover {
+    border: 1px solid gray;
+    cursor: pointer;
+  }
 `;
 
 const Input = styled.input`
@@ -68,7 +73,7 @@ export default function Introduction() {
 
     if (file) {
       try {
-        const response: IPostHistoryResponse = await postHistoryFile(file);
+        const response: IHistoryApiResponse = await postHistoryFile(file);
 
         if (response.result === "ok" && response.data) {
           const browserHistory = response.data;
@@ -81,7 +86,6 @@ export default function Introduction() {
           setErrorMessage(response.error.message);
         }
       } catch (error: any) {
-        console.log("error", error.message);
         setErrorMessage("히스토리 파일 업로드에 실패했습니다.");
       }
     }

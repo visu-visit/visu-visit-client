@@ -1,8 +1,10 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { IBrowserHistory } from "../../types/history";
+import { IDomainNode } from "../../types/history.d";
 /* eslint-disable no-param-reassign */
 
-const INITIAL_BROWSER_HISTORY_ID = "initialization";
+import { IBrowserHistory } from "../../types/history";
+
+export const INITIAL_BROWSER_HISTORY_ID = "initialization";
 
 const initialState: IBrowserHistory = {
   nanoId: INITIAL_BROWSER_HISTORY_ID,
@@ -29,23 +31,27 @@ const initialState: IBrowserHistory = {
   domainNodes: [
     {
       name: "http://www.naver.com",
-      index: 0,
-      x: 500,
-      y: 300,
+      x: 0,
+      y: 0,
       fx: 300,
       fy: 300,
+      memo: "memo",
+      color: "skyblue",
       visitCount: 1,
       visitDuration: 0,
+      lastVisitTime: null,
     },
     {
       name: "http://www.google.com",
-      index: 1,
       x: 500,
       y: 300,
       fx: 500,
       fy: 500,
+      memo: "",
+      color: "lightcoral",
       visitCount: 1,
       visitDuration: 0,
+      lastVisitTime: null,
     },
   ],
 };
@@ -54,17 +60,54 @@ export const historySlice = createSlice({
   name: "history",
   initialState,
   reducers: {
-    updateBrowserHistory: (state, action: PayloadAction<IBrowserHistory>) => {
-      state.nanoId = action.payload.nanoId;
-      state.domainNodes = action.payload.domainNodes;
-      state.totalVisits = action.payload.totalVisits;
+    updateBrowserHistory: (
+      state,
+      { payload: { nanoId, domainNodes, totalVisits } }: PayloadAction<IBrowserHistory>,
+    ) => {
+      state.nanoId = nanoId;
+      state.domainNodes = domainNodes;
+      state.totalVisits = totalVisits;
     },
-    changePosition: (state, action: PayloadAction) => {
-      //
+    changeNode: (state, action: PayloadAction<IDomainNode>) => {
+      const targetIndex = state.domainNodes.findIndex((node) => node.name === action.payload.name);
+
+      state.domainNodes[targetIndex] = { ...action.payload };
+    },
+    changeNodeColor: (state, action: PayloadAction<{ domainName: string; color: string }>) => {
+      const targetIndex = state.domainNodes.findIndex(
+        (node) => node.name === action.payload.domainName,
+      );
+
+      state.domainNodes[targetIndex].color = action.payload.color;
+    },
+    changeNodeMemo: (state, action: PayloadAction<{ domainName: string; memo: string }>) => {
+      const { domainName, memo } = action.payload;
+      const targetIndex = state.domainNodes.findIndex((node) => node.name === domainName);
+
+      state.domainNodes[targetIndex].memo = memo;
+    },
+    deleteNode: (state, action: PayloadAction<{ domainName: string }>) => {
+      const { domainName } = action.payload;
+      const targetIndex = state.domainNodes.findIndex((node) => node.name === domainName);
+
+      state.totalVisits = state.totalVisits.filter(({ sourceUrl, targetUrl }) => {
+        if (targetUrl.includes(domainName)) {
+          return false;
+        }
+
+        if (sourceUrl && sourceUrl.includes(domainName)) {
+          return false;
+        }
+
+        return true;
+      });
+
+      state.domainNodes.splice(targetIndex, 1);
     },
   },
 });
 
-export const { updateBrowserHistory, changePosition } = historySlice.actions;
+export const { updateBrowserHistory, changeNode, changeNodeMemo, changeNodeColor, deleteNode } =
+  historySlice.actions;
 
 export default historySlice.reducer;

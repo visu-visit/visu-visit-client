@@ -47,24 +47,17 @@ export default function FileLocationDescription() {
         <SubTitle>2. Check Your “profile path”</SubTitle>
         <Paragraph>
           Mac Example:
-          <Code>
-            /users/your_name/library/application support/google/chrome/default
-          </Code>
+          <Code>/users/your_name/library/application support/google/chrome/default</Code>
         </Paragraph>
         <Paragraph>
           Window Example:
-          <Code>
-            C:/users/your_name/appdata/local/google.chrome/user Data/default/
-          </Code>
+          <Code>C:/users/your_name/appData/local/google.chrome/user Data/default/</Code>
         </Paragraph>
       </Section>
       <Section>
         <SubTitle>3. Go To Your PATH & Get Your “History” File</SubTitle>
         <Paragraph>
-          <img
-            alt="chrome-version"
-            src="images/fileLocationDescription/chrome-version.png"
-          />
+          <img alt="chrome-version" src="images/fileLocationDescription/chrome-version.png" />
         </Paragraph>
       </Section>
       <Section>
