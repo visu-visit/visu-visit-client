@@ -1,7 +1,8 @@
+/* eslint-disable no-useless-escape */
+
 import { select } from "d3-selection";
 import cloneDeep from "lodash/cloneDeep";
 import { DEFAULT_STROKE_WIDTH, FORCE_STRENGTH, MINIMUM_RADIUS } from "../../constants/history";
-/* eslint-disable no-useless-escape */
 
 import { IDomainLink, IVisit, IDomainNode } from "../../types/history";
 
