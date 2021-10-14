@@ -1,19 +1,10 @@
 /* eslint-disable no-useless-escape */
 
+import { scaleLinear, scaleSqrt } from "d3-scale";
 import { select } from "d3-selection";
 import cloneDeep from "lodash/cloneDeep";
-import { DEFAULT_STROKE_WIDTH, FORCE_STRENGTH, MINIMUM_RADIUS } from "../../constants/history";
 
 import { IDomainLink, IVisit, IDomainNode } from "../../types/history";
-
-export const convertToRadius = (num: number): number => {
-  let radius = MINIMUM_RADIUS;
-
-  radius += Math.floor(num / 100) * 10;
-  radius = Math.min(radius, 50);
-
-  return radius;
-};
 
 export const removeSpecialCases = (str: string): string => {
   const reg = /[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/ ]/gim;
@@ -63,16 +54,35 @@ export const makeGraphData = (
   return { nodes, links: Object.values(links) };
 };
 
-// TODO: 방문횟수가 많을 수록 짧아지도록, 또는 link의 target과 source의 lastVisitTime 비교하여 간격이 짧을 수록 거리를 가깝게
-export const handleLinkDistance = (link: IDomainLink) => 200;
-// TODO: domain의 visitCount와 visitDuration에 따라 커지도록
-export const handleNodeStrength = (node: IDomainNode) => FORCE_STRENGTH;
+const MINIMUM_DISTANCE = 200;
+const MAXIMUM_DISTANCE = 800;
+const MAX_HANDLED_LINK_COUNT = 1000;
+const MAX_HANDLED_VISIT_DURATION = 1000000;
+const MAX_NODE_STRENGTH = -300;
+const MIN_NODE_STRENGTH = -800;
+const MINIMUM_RADIUS = 20;
+const MAXIMUM_RADIUS = 100;
 
-export const handleLinkStroke = (link: IDomainLink) => DEFAULT_STROKE_WIDTH;
+const createLinkBySourceAndTarget = scaleLinear()
+  .domain([0, MAX_HANDLED_LINK_COUNT])
+  .range([MINIMUM_DISTANCE, MAXIMUM_DISTANCE]);
 
-// TODO radius 계산, 비율적으로 노드 크기가 제각각이도록 더 정밀하도록 바꿀 것
-export const handleNodeRadius = (domainNode: IDomainNode) =>
-  convertToRadius(domainNode.visitDuration / 60);
+export const handleLinkDistance = (link: IDomainLink) => createLinkBySourceAndTarget(link.count);
+
+export const getNodeStrength = (node: IDomainNode) =>
+  scaleSqrt().domain([0, MAX_HANDLED_VISIT_DURATION]).range([MIN_NODE_STRENGTH, MAX_NODE_STRENGTH])(
+    node.visitDuration,
+  );
+
+export const getLinkStroke = (link: IDomainLink) =>
+  scaleLinear().domain([0, MAX_HANDLED_LINK_COUNT]).range([1, 10])(link.count);
+
+export const convertDurationToRadius = scaleSqrt()
+  .domain([0, MAX_HANDLED_VISIT_DURATION])
+  .range([MINIMUM_RADIUS, MAXIMUM_RADIUS]);
+
+export const getNodeRadius = (domainNode: IDomainNode) =>
+  convertDurationToRadius(domainNode.visitDuration);
 
 export const handleMouseOut = (event: MouseEvent, domainNode: IDomainNode) => {
   if (!domainNode) {

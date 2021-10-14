@@ -22,6 +22,4 @@ export const NODE_COLORS = [
   "lightseagreen",
 ];
 
-export const MINIMUM_RADIUS = 20;
-export const FORCE_STRENGTH = -400;
 export const DEFAULT_STROKE_WIDTH = 1;

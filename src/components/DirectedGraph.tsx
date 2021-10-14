@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 
-import { MouseEvent, useEffect, useRef, useState } from "react";
+import React, { MouseEvent, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { forceManyBody, forceLink, forceSimulation, forceX, forceY } from "d3-force";
@@ -17,16 +17,15 @@ import { DEFAULT_STROKE_WIDTH, URL_TRANSITION_TYPES } from "../constants/history
 import Modal from "./shared/Modal";
 import NodeDetail from "./NodeDetail";
 import {
-  convertToRadius,
   getArrowPosition,
-  handleNodeRadius,
   handleLinkDistance,
-  handleLinkStroke,
+  getLinkStroke,
   handleMouseOut,
   handleMouseOver,
-  handleNodeStrength,
   makeGraphData,
   removeSpecialCases,
+  getNodeRadius,
+  getNodeStrength,
 } from "../util/history";
 
 const Wrapper = styled.div`
@@ -104,7 +103,7 @@ export default function DirectedGraph() {
           .distance(handleLinkDistance)
           .id(({ name }) => name),
       )
-      .force("charge", forceManyBody<IDomainNode>().strength(handleNodeStrength))
+      .force("charge", forceManyBody<IDomainNode>().strength(getNodeStrength))
       .force("x", forceX(width / 2))
       .force("y", forceY(height / 2));
 
@@ -142,7 +141,7 @@ export default function DirectedGraph() {
       .selectAll("path")
       .data<IDomainLink>(links)
       .join("path")
-      .attr("stroke-width", handleLinkStroke)
+      .attr("stroke-width", getLinkStroke)
       .attr("stroke", (domainLink) => color(domainLink.type))
       .attr("marker-end", (domainLink) => `url(#arrow-${domainLink.type})`);
 
@@ -160,7 +159,7 @@ export default function DirectedGraph() {
       .attr("fill", ({ color: nodeColor }) => nodeColor || "white")
       .attr("stroke", "gray")
       .attr("stroke-width", DEFAULT_STROKE_WIDTH)
-      .attr("r", handleNodeRadius)
+      .attr("r", getNodeRadius)
       .join("circle");
 
     nodeGroup
@@ -169,29 +168,36 @@ export default function DirectedGraph() {
       .on("error", ({ target }) => {
         select(target).attr("xlink:href", "/images/graph/defaultNodeFavicon.png");
       })
-      .attr("width", (node) => handleNodeRadius(node))
-      .attr("height", (node) => handleNodeRadius(node))
-      .attr("x", (node) => -handleNodeRadius(node) / 2)
-      .attr("y", (node) => -handleNodeRadius(node) / 2);
+      .attr("width", (node) => getNodeRadius(node))
+      .attr("height", (node) => getNodeRadius(node))
+      .attr("x", (node) => -getNodeRadius(node) / 2)
+      .attr("y", (node) => -getNodeRadius(node) / 2);
 
     nodeGroup
       .append("circle")
       .attr("fill", "red")
       .attr("opacity", 0.5)
-      .attr("r", (node) => (node.memo ? handleNodeRadius(node) / 10 : 0))
+      .attr("r", (node) => (node.memo ? getNodeRadius(node) / 10 : 0))
       .attr("width", 20)
       .attr("height", 20)
       .attr(
         "transform",
-        (node) => `translate(${handleNodeRadius(node) / 2} -${handleNodeRadius(node) / 2})`,
+        (node) => `translate(${getNodeRadius(node) / 2} -${getNodeRadius(node) / 2})`,
       );
 
     const handleContextMenu = (event: MouseEvent, domainNode: IDomainNode) => {
       event.preventDefault();
 
+      const [RESIZE_X, RESIZE_Y] = [500, 300];
+      const SCREEN_HALF_RATIO = 0.5;
+      const { pageX, pageY, clientX, clientY, view } = event;
+      const { innerHeight, innerWidth }: any = view;
+      const left = clientX / innerWidth < SCREEN_HALF_RATIO ? pageX : pageX - RESIZE_X;
+      const top = clientY / innerHeight < SCREEN_HALF_RATIO ? pageY : pageY - RESIZE_Y;
+
       setClickedNode({
-        top: event.clientY,
-        left: event.clientX,
+        top,
+        left,
         node: domainNode,
       });
       setIsModalVisible(true);
@@ -220,16 +226,14 @@ export default function DirectedGraph() {
 
     const handleTick = () => {
       linkGroup.attr("d", (domainLink) => {
-        const visitCount = nodes.find((node) => node.name === domainLink.target.name)?.visitCount;
+        const targetNode = nodes.find((node) => node.name === domainLink.target.name);
         let radius = 20;
 
-        if (visitCount) {
-          radius = convertToRadius(visitCount);
+        if (targetNode) {
+          radius = getNodeRadius(targetNode);
         }
 
-        const d = getArrowPosition(domainLink, radius);
-
-        return d;
+        return getArrowPosition(domainLink, radius);
       });
 
       nodeGroup.attr("transform", (domainNode) => `translate(${domainNode.x},${domainNode.y})`);
