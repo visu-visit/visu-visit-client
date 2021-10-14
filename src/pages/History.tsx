@@ -10,6 +10,7 @@ import { INITIAL_BROWSER_HISTORY_ID, updateBrowserHistory } from "../features/hi
 import { IBrowserHistory, IHistoryFormData, IHistoryApiResponse } from "../types/history";
 import { deleteHistory, fetchHistory, saveHistory } from "../api";
 import { RootState } from "../app/store";
+
 import DirectedGraph from "../components/DirectedGraph";
 import Aside from "../components/shared/Aside";
 import ErrorMessage from "../components/shared/ErrorMessage";
@@ -284,7 +285,11 @@ export default function History() {
           <Instruction />
         </Modal>
       )}
-      {isLoading && <Loading />}
+      {isLoading && (
+        <Modal>
+          <Loading center />
+        </Modal>
+      )}
       {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
       {!errorMessage && <DirectedGraph />}
     </Wrapper>
