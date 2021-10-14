@@ -4,7 +4,7 @@ import styled from "styled-components";
 interface ModalProps {
   children: ReactChild | ReactChildren;
   position?: { top: string; left: string };
-  handleClose: MouseEventHandler;
+  handleClose?: MouseEventHandler;
 }
 
 const Background = styled.div`
@@ -26,13 +26,17 @@ const Container = styled.div<{ position: { top: string; left: string } }>`
   left: ${({ position: { left } }) => left};
   align-items: center;
   justify-content: center;
-  width: fit-content;
-  height: fit-content;
+  width: 0;
+  height: 0;
   border-radius: 10px;
   z-index: 9999;
 `;
 
-export default function Modal({ children, handleClose, position }: ModalProps) {
+export default function Modal({
+  children,
+  handleClose = () => {},
+  position = { top: "50%", left: "50%" },
+}: ModalProps) {
   return (
     <>
       <Background
@@ -49,4 +53,5 @@ export default function Modal({ children, handleClose, position }: ModalProps) {
 
 Modal.defaultProps = {
   position: { top: "50%", left: "50%" },
+  handleClose: () => {},
 };

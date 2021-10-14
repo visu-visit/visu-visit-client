@@ -69,6 +69,10 @@ const Color = styled.div<{ color: string }>`
   height: 20px;
   background-color: ${({ color }) => color};
   border: 0.1px solid gray;
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const MemoContainer = styled.section`
