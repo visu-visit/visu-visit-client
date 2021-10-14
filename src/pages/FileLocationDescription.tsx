@@ -8,6 +8,7 @@ const Wrapper = styled.div`
   width: 100%;
   height: 100%;
   flex-direction: column;
+  overflow: auto;
 `;
 
 const Code = styled.span`

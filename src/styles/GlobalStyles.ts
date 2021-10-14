@@ -10,6 +10,7 @@ const GlobalStyles = createGlobalStyle`
     background-color: ${theme.color.gray};
     height: 100vh;
     min-width: 1000px;
+    overflow: hidden;
 
     #root {
       height: 100%;

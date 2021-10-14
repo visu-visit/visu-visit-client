@@ -54,7 +54,7 @@ const Domain = styled.h1`
   line-height: 30px;
 
   &:hover {
-    overflow: scroll;
+    overflow-x: scroll;
   }
 `;
 

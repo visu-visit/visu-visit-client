@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams, useHistory } from "react-router-dom";
 import styled from "styled-components";
@@ -24,6 +24,7 @@ const Wrapper = styled.div`
   display: flex;
   font-family: Montserrat;
   flex-direction: column;
+
 `;
 
 const Form = styled.form`
