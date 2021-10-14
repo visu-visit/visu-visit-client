@@ -35,7 +35,11 @@ export default function FileLocationDescription() {
   return (
     <Wrapper>
       <Title>Where Is My History ?</Title>
+
       <Section>
+        <Paragraph>
+          <img alt="chrome-version" src="images/fileLocationDescription/chrome-version.gif" />
+        </Paragraph>
         <SubTitle>
           {"1. Type "}
           <Code>Chrome://version</Code>
