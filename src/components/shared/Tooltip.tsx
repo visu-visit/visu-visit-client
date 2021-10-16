@@ -1,51 +1,56 @@
-import { ReactChild, ReactChildren } from "react";
-import styled, { keyframes } from "styled-components";
-
-const tooltipKeyFrames = keyframes`
-  0% { opacity: 0; }
-  40% { opacity: 0; }
-  50% { opacity: 1; }
-  100% { opacity: 1;}
-`;
+import { MouseEventHandler, ReactChild, useState } from "react";
+import styled from "styled-components";
 
 const Wrapper = styled.div`
   position: relative;
   width: fit-content;
   height: fit-content;
-
-  &:hover > .tooltip,
-  &:active > .tooltip {
-    display: flex;
-  }
 `;
 
-const Message = styled.div`
-  position: absolute;
-  display: none;
+const Message = styled.div<{ top: string; left: string }>`
+  position: fixed;
+  ${({ top, left }) => `top: ${top}; left: ${left};`}
+  display: flex;
   align-items: center;
   width: max-content;
   height: 20px;
   line-height: 20px;
-  z-index: 9999;
   font-size: 10px;
   overflow: hidden;
-  top: -10px;
   border-radius: 0;
   color: white;
   background-color: #0000006f;
-  animation: ${tooltipKeyFrames} 1s;
+  z-index: 9999;
 `;
 
 interface TooltipProps {
-  children: ReactChild | ReactChildren;
+  children: ReactChild;
   message: string;
 }
 
 export default function Tooltip({ children, message }: TooltipProps) {
+  const [isVisible, setIsVisible] = useState(false);
+  const [position, setPosition] = useState({ top: "0px", left: "0px" });
+
+  const handleMouseEnter: MouseEventHandler<HTMLDivElement> = (event) => {
+    setPosition({ top: `${event.clientY}px`, left: `${event.clientX}px` });
+    setIsVisible(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsVisible(false);
+  };
+
+  const { top, left } = position;
+
   return (
-    <Wrapper>
+    <Wrapper onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       {children}
-      <Message className="tooltip">{message}</Message>
+      {isVisible && (
+        <Message top={top} left={left} className="tooltip">
+          {message}
+        </Message>
+      )}
     </Wrapper>
   );
 }
