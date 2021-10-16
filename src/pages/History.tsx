@@ -24,7 +24,6 @@ const Wrapper = styled.div`
   display: flex;
   font-family: Montserrat;
   flex-direction: column;
-
 `;
 
 const Form = styled.form`
@@ -130,6 +129,7 @@ export default function History() {
   const [isLoading, setIsLoading] = useState(false);
   const [isShareVisible, setIsShareVisible] = useState(false);
   const [isHowToVisible, setIsHowToVisible] = useState(false);
+  const [linkCopiedMessage, setLinkCopiedMessage] = useState("");
   const history = useHistory();
   const dispatch = useDispatch();
 
@@ -274,10 +274,29 @@ export default function History() {
       </Aside>
 
       {isShareVisible && (
-        <Modal handleClose={() => setIsShareVisible(false)}>
+        <Modal
+          handleClose={() => {
+            setLinkCopiedMessage("");
+            setIsShareVisible(false);
+          }}
+        >
           <Share>
             {window.location.href}
-            <BiCopy size={20} />
+            <BiCopy
+              size={20}
+              onClick={async () => {
+                setLinkCopiedMessage("");
+
+                try {
+                  await window.navigator.clipboard.writeText(window.location.href);
+
+                  setLinkCopiedMessage("Copied!");
+                } catch (error) {
+                  setLinkCopiedMessage("공유 링크를 복사하는데 실패했습니다.");
+                }
+              }}
+            />
+            <div>{linkCopiedMessage}</div>
           </Share>
         </Modal>
       )}
