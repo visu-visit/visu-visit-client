@@ -95,12 +95,13 @@ const Share = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 600px;
+  width: max-content;
   height: 100px;
   background-color: white;
   transform: translate(-50%, -50%);
   border-radius: 20px;
   gap: 10px;
+  padding: 10px;
 
   > svg {
     padding: 5px;
@@ -197,6 +198,18 @@ export default function History() {
     }
   };
 
+  const handleClickCopyLink = async () => {
+    setLinkCopiedMessage("");
+
+    try {
+      await window.navigator.clipboard.writeText(window.location.href);
+
+      setLinkCopiedMessage("Copied!");
+    } catch (error) {
+      setLinkCopiedMessage("공유 링크를 복사하는데 실패했습니다.");
+    }
+  };
+
   const { start, end, domain } = formData;
   const isFormSubmitActive: boolean = Boolean(
     new Date(start).getTime() <= new Date(end).getTime() || (!start && !end && domain),
@@ -282,21 +295,8 @@ export default function History() {
         >
           <Share>
             {window.location.href}
-            <BiCopy
-              size={20}
-              onClick={async () => {
-                setLinkCopiedMessage("");
-
-                try {
-                  await window.navigator.clipboard.writeText(window.location.href);
-
-                  setLinkCopiedMessage("Copied!");
-                } catch (error) {
-                  setLinkCopiedMessage("공유 링크를 복사하는데 실패했습니다.");
-                }
-              }}
-            />
-            <div>{linkCopiedMessage}</div>
+            <BiCopy size={20} onClick={handleClickCopyLink} />
+            <span>{linkCopiedMessage}</span>
           </Share>
         </Modal>
       )}
