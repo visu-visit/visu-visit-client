@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 
-import React, { MouseEvent, useEffect, useRef, useState } from "react";
+import { MouseEvent, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { forceManyBody, forceLink, forceSimulation, forceX, forceY } from "d3-force";
@@ -53,13 +53,13 @@ export default function DirectedGraph() {
   const domainNodes = useSelector<RootState, IDomainNode[]>(({ history }) => history.domainNodes);
   const totalVisits = useSelector<RootState, IVisit[]>(({ history }) => history.totalVisits);
   const [clickedNode, setClickedNode] = useState<IClickedNode>(INITIAL_CLICKED_NODE);
-  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [isNodeDetailVisible, setIsNodeDetailVisible] = useState<boolean>(false);
   const [zoomTransform, setZoomTransform] = useState<any>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const dispatch = useDispatch();
 
-  const handleCloseModal: () => void = () => {
-    setIsModalVisible(false);
+  const handleCloseNodeDetail: () => void = () => {
+    setIsNodeDetailVisible(false);
   };
 
   useEffect(() => {
@@ -112,7 +112,7 @@ export default function DirectedGraph() {
       node.fy = y;
       simulation.alpha(1).restart();
     };
-    const handleDragEnd = ({ x, y }: DragEvent, node: IDomainNode) => {
+    const handleDragEnd = (event: DragEvent, node: IDomainNode) => {
       dispatch(changeNode(node));
     };
     const dragBehavior = drag<SVGSVGElement, IDomainNode>()
@@ -200,7 +200,7 @@ export default function DirectedGraph() {
         left,
         node: domainNode,
       });
-      setIsModalVisible(true);
+      setIsNodeDetailVisible(true);
     };
 
     const handleDoubleClick = (event: MouseEvent, domainNode: IDomainNode) => {
@@ -245,12 +245,12 @@ export default function DirectedGraph() {
   return (
     <Wrapper>
       <Board ref={svgRef} />
-      {isModalVisible && (
+      {isNodeDetailVisible && (
         <Modal
           position={{ top: `${clickedNode.top}px`, left: `${clickedNode.left}px` }}
-          handleClose={handleCloseModal}
+          handleClose={handleCloseNodeDetail}
         >
-          <NodeDetail node={clickedNode.node} handleClose={handleCloseModal} />
+          <NodeDetail node={clickedNode.node} handleClose={handleCloseNodeDetail} />
         </Modal>
       )}
     </Wrapper>
