@@ -1,7 +1,8 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { IDomainNode } from "../../types/history.d";
 /* eslint-disable no-param-reassign */
 
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+
+import { IDomainNode } from "../../types/history.d";
 import { IBrowserHistory } from "../../types/history";
 
 export const INITIAL_BROWSER_HISTORY_ID = "initialization";
@@ -68,11 +69,27 @@ export const historySlice = createSlice({
       state.domainNodes = domainNodes;
       state.totalVisits = totalVisits;
     },
-    changeNode: (state, action: PayloadAction<IDomainNode>) => {
+
+    changeNodePosition: (state, action: PayloadAction<IDomainNode>) => {
       const targetIndex = state.domainNodes.findIndex((node) => node.name === action.payload.name);
 
-      state.domainNodes[targetIndex] = { ...action.payload };
+      if (targetIndex !== -1) {
+        state.domainNodes[targetIndex] = { ...action.payload };
+      }
     },
+
+    resetNodePosition: (state, action: PayloadAction<IDomainNode>) => {
+      const targetIndex = state.domainNodes.findIndex((node) => node.name === action.payload.name);
+      const targetNode = action.payload;
+
+      delete targetNode.fx;
+      delete targetNode.fy;
+
+      if (targetIndex !== -1) {
+        state.domainNodes[targetIndex] = { ...targetNode };
+      }
+    },
+
     changeNodeColor: (state, action: PayloadAction<{ domainName: string; color: string }>) => {
       const targetIndex = state.domainNodes.findIndex(
         (node) => node.name === action.payload.domainName,
@@ -80,15 +97,23 @@ export const historySlice = createSlice({
 
       state.domainNodes[targetIndex].color = action.payload.color;
     },
+
     changeNodeMemo: (state, action: PayloadAction<{ domainName: string; memo: string }>) => {
       const { domainName, memo } = action.payload;
       const targetIndex = state.domainNodes.findIndex((node) => node.name === domainName);
 
-      state.domainNodes[targetIndex].memo = memo;
+      if (targetIndex !== -1) {
+        state.domainNodes[targetIndex].memo = memo;
+      }
     },
+
     deleteNode: (state, action: PayloadAction<{ domainName: string }>) => {
       const { domainName } = action.payload;
       const targetIndex = state.domainNodes.findIndex((node) => node.name === domainName);
+
+      if (targetIndex === -1) {
+        return;
+      }
 
       state.totalVisits = state.totalVisits.filter(({ sourceUrl, targetUrl }) => {
         if (targetUrl.includes(domainName)) {
@@ -107,7 +132,13 @@ export const historySlice = createSlice({
   },
 });
 
-export const { updateBrowserHistory, changeNode, changeNodeMemo, changeNodeColor, deleteNode } =
-  historySlice.actions;
+export const {
+  updateBrowserHistory,
+  changeNodePosition,
+  resetNodePosition,
+  changeNodeMemo,
+  changeNodeColor,
+  deleteNode,
+} = historySlice.actions;
 
 export default historySlice.reducer;

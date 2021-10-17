@@ -7,11 +7,11 @@ import { forceManyBody, forceLink, forceSimulation, forceX, forceY } from "d3-fo
 import { schemePaired } from "d3-scale-chromatic";
 import { scaleOrdinal } from "d3-scale";
 import { select } from "d3-selection";
-import { zoom } from "d3-zoom";
+import { D3ZoomEvent, zoom, ZoomTransform } from "d3-zoom";
 import { drag } from "d3-drag";
 
 import { RootState } from "../app/store";
-import { changeNode } from "../features/history/historySlice";
+import { changeNodePosition, resetNodePosition } from "../features/history/historySlice";
 import { IClickedNode, IDomainLink, IDomainNode, IVisit } from "../types/history";
 import { DEFAULT_STROKE_WIDTH, URL_TRANSITION_TYPES } from "../constants/history";
 import Modal from "./shared/Modal";
@@ -55,11 +55,11 @@ export default function DirectedGraph() {
   const totalVisits = useSelector<RootState, IVisit[]>(({ history }) => history.totalVisits);
   const [clickedNode, setClickedNode] = useState<IClickedNode>(INITIAL_CLICKED_NODE);
   const [isNodeDetailVisible, setIsNodeDetailVisible] = useState<boolean>(false);
-  const [zoomTransform, setZoomTransform] = useState<any>(null);
+  const [zoomTransform, setZoomTransform] = useState<ZoomTransform | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const dispatch = useDispatch();
 
-  const handleCloseNodeDetail: () => void = () => {
+  const handleCloseNodeDetail = () => {
     setIsNodeDetailVisible(false);
   };
 
@@ -70,11 +70,11 @@ export default function DirectedGraph() {
 
     const { width, height } = svgRef.current.getBoundingClientRect();
     const { nodes, links } = makeGraphData(totalVisits, domainNodes);
-    const svg = select<SVGSVGElement, unknown>(svgRef.current as SVGSVGElement);
+    const svg = select<SVGSVGElement, SVGSVGElement>(svgRef.current);
 
     svg.selectAll("*").remove();
 
-    const container = svg.append("g");
+    const container = svg.append("svg:g");
 
     if (zoomTransform) {
       container.attr(
@@ -83,11 +83,11 @@ export default function DirectedGraph() {
       );
     }
 
-    const handleZoom = (event: any) => {
-      container.attr("transform", event.transform);
+    const handleZoom = (event: D3ZoomEvent<SVGSVGElement, SVGSVGElement>) => {
+      container.attr("transform", event.transform.toString());
       setZoomTransform(event.transform);
     };
-    const zoomBehavior = zoom<SVGSVGElement, unknown>()
+    const zoomBehavior = zoom<SVGSVGElement, SVGSVGElement>()
       .extent([
         [0, 0],
         [width, height],
@@ -114,7 +114,7 @@ export default function DirectedGraph() {
       simulation.alpha(1).restart();
     };
     const handleDragEnd = (event: DragEvent, node: IDomainNode) => {
-      dispatch(changeNode(node));
+      dispatch(changeNodePosition(node));
     };
     const dragBehavior = drag<SVGSVGElement, IDomainNode>()
       .on("drag", handleDrag)
@@ -209,10 +209,7 @@ export default function DirectedGraph() {
         return;
       }
 
-      delete domainNode.fx;
-      delete domainNode.fy;
-
-      dispatch(changeNode(domainNode));
+      dispatch(resetNodePosition(domainNode));
 
       simulation.alpha(1).restart();
     };
