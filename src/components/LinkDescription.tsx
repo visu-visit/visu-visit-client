@@ -32,7 +32,7 @@ export default function LinkDescription({ colorScaleOrdinal }: LinkDescriptionPr
   return (
     <Wrapper>
       {transitionTypes.map((transitionType, index) => (
-        <DescriptionBox>
+        <DescriptionBox key={transitionType}>
           <ColorBox backgroundColor={colors[index]} />
           <div>{transitionType}</div>
         </DescriptionBox>
