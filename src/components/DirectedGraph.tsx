@@ -4,7 +4,7 @@ import { MouseEvent, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { forceManyBody, forceLink, forceSimulation, forceX, forceY } from "d3-force";
-import { schemeCategory10 } from "d3-scale-chromatic";
+import { schemePaired } from "d3-scale-chromatic";
 import { scaleOrdinal } from "d3-scale";
 import { select } from "d3-selection";
 import { zoom } from "d3-zoom";
@@ -27,6 +27,7 @@ import {
   getNodeRadius,
   getNodeStrength,
 } from "../util/history";
+import LinkDescription from "./LinkDescription";
 
 const Wrapper = styled.div`
   margin: 20px;
@@ -46,7 +47,7 @@ const Board = styled.svg`
   border-radius: 10px;
 `;
 
-const color = scaleOrdinal(URL_TRANSITION_TYPES, schemeCategory10);
+const colorScaleOrdinal = scaleOrdinal(URL_TRANSITION_TYPES, schemePaired);
 const INITIAL_CLICKED_NODE = { top: 0, left: 0, node: {} as IDomainNode };
 
 export default function DirectedGraph() {
@@ -132,7 +133,7 @@ export default function DirectedGraph() {
       .attr("markerHeight", 5)
       .attr("orient", "auto")
       .append("svg:path")
-      .attr("fill", color)
+      .attr("fill", colorScaleOrdinal)
       .attr("d", "M0, -5L10, 0L0, 5");
 
     const linkGroup = container
@@ -142,7 +143,7 @@ export default function DirectedGraph() {
       .data<IDomainLink>(links)
       .join("path")
       .attr("stroke-width", getLinkStroke)
-      .attr("stroke", (domainLink) => color(domainLink.type))
+      .attr("stroke", (domainLink) => colorScaleOrdinal(domainLink.type))
       .attr("marker-end", (domainLink) => `url(#arrow-${domainLink.type})`);
 
     const nodeGroup = container
@@ -244,6 +245,7 @@ export default function DirectedGraph() {
 
   return (
     <Wrapper>
+      <LinkDescription colorScaleOrdinal={colorScaleOrdinal} />
       <Board ref={svgRef} />
       {isNodeDetailVisible && (
         <Modal
