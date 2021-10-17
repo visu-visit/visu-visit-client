@@ -178,15 +178,16 @@ export default function History() {
 
         if (name === "save") {
           await saveHistory({ id: historyId, history: browserHistoryData });
+          setIsLoading(false);
         } else if (name === "delete") {
           await deleteHistory({ id: historyId });
+          setIsLoading(false);
           history.push("/");
         }
       } catch (error: any) {
         setErrorMessage(
           `히스토리를 ${ASIDE_BUTTON_KOREAN[name]}하는 과정에서 에러가 발생했습니다.`,
         );
-      } finally {
         setIsLoading(false);
       }
     }

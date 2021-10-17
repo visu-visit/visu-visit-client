@@ -95,18 +95,20 @@ export default function Introduction() {
           const browserHistory = response.data;
 
           dispatch(updateBrowserHistory(browserHistory));
+
+          setIsLoading(false);
           history.push(`/browser-history/${browserHistory.nanoId}`);
         }
 
         if (response.error) {
           setErrorMessage(response.error.message);
+          setIsLoading(false);
         }
       } catch (error: any) {
         setErrorMessage("히스토리 파일 업로드에 실패했습니다.");
+        setIsLoading(false);
       }
     }
-
-    setIsLoading(false);
   };
 
   return (
