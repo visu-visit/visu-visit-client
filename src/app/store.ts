@@ -8,7 +8,9 @@ export const store = configureStore({
     history: historyReducer,
   },
   middleware: (curryGetDefaultMiddleware) =>
-    curryGetDefaultMiddleware().concat(logger),
+    process.env.NODE_ENV === "production"
+      ? curryGetDefaultMiddleware()
+      : curryGetDefaultMiddleware().concat(logger),
 });
 
 export type AppDispatch = typeof store.dispatch;
