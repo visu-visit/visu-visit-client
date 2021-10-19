@@ -24,7 +24,8 @@ export interface IVisit {
   visitDuration: number;
   visitTime: string;
   transitionType: UrlTransition;
-  sourceUrl: null | string;
+  sourceUrl: string | null;
+  sourceUrlVisitCount: number | null;
 }
 
 export interface INodePosition {

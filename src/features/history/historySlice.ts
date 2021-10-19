@@ -7,7 +7,7 @@ import { IBrowserHistory } from "../../types/history";
 
 export const INITIAL_BROWSER_HISTORY_ID = "initialization";
 
-const initialState: IBrowserHistory = {
+export const initialState: IBrowserHistory = {
   nanoId: INITIAL_BROWSER_HISTORY_ID,
   totalVisits: [
     {
@@ -18,6 +18,7 @@ const initialState: IBrowserHistory = {
       visitDuration: 1000,
       transitionType: "Link",
       sourceUrl: "http://www.google.com",
+      sourceUrlVisitCount: 1,
     },
     {
       visitId: 1,
@@ -27,6 +28,7 @@ const initialState: IBrowserHistory = {
       visitDuration: 1000,
       transitionType: "Link",
       sourceUrl: "http://www.naver.com",
+      sourceUrlVisitCount: 1,
     },
   ],
   domainNodes: [
@@ -95,7 +97,9 @@ export const historySlice = createSlice({
         (node) => node.name === action.payload.domainName,
       );
 
-      state.domainNodes[targetIndex].color = action.payload.color;
+      if (targetIndex !== -1) {
+        state.domainNodes[targetIndex].color = action.payload.color;
+      }
     },
 
     changeNodeMemo: (state, action: PayloadAction<{ domainName: string; memo: string }>) => {
