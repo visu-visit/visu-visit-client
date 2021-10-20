@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 
-import { MouseEvent, useEffect, useRef, useState } from "react";
+import { MouseEvent, useLayoutEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { forceManyBody, forceLink, forceSimulation, forceX, forceY } from "d3-force";
@@ -63,7 +63,7 @@ export default function DirectedGraph() {
     setIsNodeDetailVisible(false);
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!svgRef.current) {
       return;
     }
