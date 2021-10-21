@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import { IBrowserHistory } from "../types/history.d";
-import { IHistoryApiResponse, IHistoryFormData } from "../types/history";
+import { IHistoryApiResponse } from "../types/history";
 
 export const postHistoryFile = async (file: File): Promise<IHistoryApiResponse> => {
   const formData = new FormData();
@@ -15,25 +15,8 @@ export const postHistoryFile = async (file: File): Promise<IHistoryApiResponse> 
   return response.json();
 };
 
-export const fetchHistory = async ({
-  id,
-  formData,
-}: {
-  id: string;
-  formData?: IHistoryFormData;
-}): Promise<IHistoryApiResponse> => {
+export const fetchHistory = async ({ id }: { id: string }): Promise<IHistoryApiResponse> => {
   const url = new URL(`${process.env.REACT_APP_SERVER_URL}/browser-history/${id}`);
-
-  if (formData) {
-    const { start, end, domain } = formData;
-
-    url.searchParams.append("start", start);
-    url.searchParams.append("end", end);
-
-    if (domain) {
-      url.searchParams.append("domain", domain);
-    }
-  }
 
   const response = await fetch(url.toString());
 
