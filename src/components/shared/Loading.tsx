@@ -28,7 +28,7 @@ export default function Loading({ center = false }: LoadingProps) {
   const [message, setMessage] = useState(INITIAL_LOADING_MESSAGE);
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
+    const intervalId = window.setInterval(() => {
       setMessage((prevMessage) => {
         if (prevMessage === `${INITIAL_LOADING_MESSAGE}...`) {
           return INITIAL_LOADING_MESSAGE;

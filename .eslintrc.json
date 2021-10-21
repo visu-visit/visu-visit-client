@@ -25,6 +25,7 @@
     "implicit-arrow-linebreak": "off",
     "no-confusing-arrow": "off",
     "function-paren-newline": "off",
-    "operator-linebreak": "off"
+    "operator-linebreak": "off",
+    "max-len": ["error", { "code": 120 }]
   }
 }

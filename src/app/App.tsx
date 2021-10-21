@@ -1,10 +1,11 @@
 import { Route, Switch } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
-import FileLocationDescription from "../pages/FileLocationDescription";
 
-import NotFound from "../components/NotFound";
+import FileLocationDescription from "../pages/FileLocationDescription";
 import History from "../pages/History";
 import Introduction from "../pages/Introduction";
+import NotFound from "../components/NotFound";
+
 import GlobalStyles from "../styles/GlobalStyles";
 import { theme } from "../styles/theme";
 
