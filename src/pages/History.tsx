@@ -6,18 +6,34 @@ import styled from "styled-components";
 import { RiSave3Fill, RiDeleteBin6Fill, RiQuestionLine } from "react-icons/ri";
 import { BiCopy } from "react-icons/bi";
 import { BsFillShareFill } from "react-icons/bs";
-import { INITIAL_BROWSER_HISTORY_ID, updateBrowserHistory } from "../features/history/historySlice";
-import { IBrowserHistory, IHistoryFormData, IHistoryApiResponse } from "../types/history";
-import { deleteHistory, fetchHistory, saveHistory } from "../api";
+
 import { RootState } from "../app/store";
+import {
+  INITIAL_BROWSER_HISTORY_ID,
+  updateBrowserHistory,
+  updateOriginBrowserHistory,
+} from "../features/history/historySlice";
+import {
+  IBrowserHistory,
+  IHistoryFormData,
+  IHistoryApiResponse,
+  IVisit,
+  IDomainNode,
+} from "../types/history";
+
+import { deleteHistory, fetchHistory, saveHistory } from "../api";
+import updateDomainNodesFromVisits from "../util/history/updateDomainNodesFromVisits";
+import filterVisits from "../util/history/filterVisits";
 
 import DirectedGraph from "../components/DirectedGraph";
+import Instruction from "../components/Instruction";
+
 import Aside from "../components/shared/Aside";
 import ErrorMessage from "../components/shared/ErrorMessage";
 import Loading from "../components/shared/Loading";
 import Title from "../components/shared/Title";
 import Modal from "../components/shared/Modal";
-import Instruction from "../components/Instruction";
+
 import { ASIDE_BUTTON_KOREAN } from "../constants/message";
 
 const Wrapper = styled.div`
@@ -121,16 +137,24 @@ const INITIAL_HISTORY_FORM_DATA = {
 };
 
 export default function History() {
-  const browserHistoryData = useSelector<RootState, IBrowserHistory>(({ history }) => history);
-  const historyId = useSelector<RootState, string>(({ history }) => history.nanoId);
+  const originBrowserHistory = useSelector<RootState, IBrowserHistory | null>(
+    ({ history }) => history.origin,
+  );
+  const browserHistoryData = useSelector<RootState, IBrowserHistory>(({ history }) => history.data);
+  const historyId = useSelector<RootState, string>(({ history }) => history.data.nanoId);
+  const domainNodes = useSelector<RootState, IDomainNode[]>(
+    ({ history }) => history.data.domainNodes,
+  );
+  const totalVisits = useSelector<RootState, IVisit[]>(({ history }) => history.data.totalVisits);
 
   const [formData, setFormData] = useState<IHistoryFormData>(INITIAL_HISTORY_FORM_DATA);
-  const { id } = useParams<{ id: string }>();
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isShareVisible, setIsShareVisible] = useState(false);
   const [isHowToVisible, setIsHowToVisible] = useState(false);
   const [linkCopiedMessage, setLinkCopiedMessage] = useState("");
+
+  const { id } = useParams<{ id: string }>();
   const history = useHistory();
   const dispatch = useDispatch();
 
@@ -139,18 +163,35 @@ export default function History() {
   };
 
   const getHistoryData = async () => {
+    let [visits, nodes] = [totalVisits, domainNodes];
+
+    if (originBrowserHistory) {
+      [visits, nodes] = [originBrowserHistory.totalVisits, originBrowserHistory.domainNodes];
+
+      const filteredVisits = filterVisits(visits, formData);
+      const updatedDomainNodes = updateDomainNodesFromVisits(filteredVisits, nodes);
+
+      dispatch(
+        updateBrowserHistory({
+          nanoId: historyId,
+          totalVisits: filteredVisits,
+          domainNodes: updatedDomainNodes,
+        }),
+      );
+
+      return;
+    }
+
     try {
       setIsLoading(true);
 
-      const response: IHistoryApiResponse = await fetchHistory({
-        formData,
-        id,
-      });
+      const response: IHistoryApiResponse = await fetchHistory({ id });
 
       if (response.result === "ok") {
         const browserHistory = response.data as IBrowserHistory;
 
-        dispatch(updateBrowserHistory(browserHistory));
+        dispatch(updateOriginBrowserHistory(browserHistory));
+        return;
       }
 
       if (response.error) {
@@ -178,6 +219,7 @@ export default function History() {
 
         if (name === "save") {
           await saveHistory({ id: historyId, history: browserHistoryData });
+          dispatch(updateOriginBrowserHistory(browserHistoryData));
           setIsLoading(false);
         } else if (name === "delete") {
           await deleteHistory({ id: historyId });

@@ -158,11 +158,11 @@ const DEFAULT_DOMAIN_IMAGE_URL = "/images/graph/defaultNodeFavicon.png";
 const MINUTES_LIMIT = 10000;
 
 export default function NodeDetail({ node, handleClose }: NodeDetailProps) {
-  const totalVisits = useSelector<RootState, IVisit[]>(({ history }) => history.totalVisits);
-  const currentNode = useSelector<RootState, IDomainNode>(({ history: { domainNodes } }) => {
-    const targetIndex = domainNodes.findIndex((domainNode) => domainNode.name === node.name);
+  const totalVisits = useSelector<RootState, IVisit[]>(({ history }) => history.data.totalVisits);
+  const currentNode = useSelector<RootState, IDomainNode>(({ history: { data } }) => {
+    const targetIndex = data.domainNodes.findIndex((domainNode) => domainNode.name === node.name);
 
-    return domainNodes[targetIndex];
+    return data.domainNodes[targetIndex];
   });
   const [memo, setMemo] = useState<string>(currentNode.memo || "");
   const [isMemoModifying, setIsMemoModifying] = useState(false);

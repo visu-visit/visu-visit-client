@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import styled from "styled-components";
 
 import { IHistoryApiResponse } from "../types/history";
-import { updateBrowserHistory } from "../features/history/historySlice";
+import { updateOriginBrowserHistory } from "../features/history/historySlice";
 import ErrorMessage from "../components/shared/ErrorMessage";
 import Title from "../components/shared/Title";
 import { postHistoryFile } from "../api";
@@ -94,8 +94,7 @@ export default function Introduction() {
         if (response.result === "ok" && response.data) {
           const browserHistory = response.data;
 
-          dispatch(updateBrowserHistory(browserHistory));
-
+          dispatch(updateOriginBrowserHistory(browserHistory));
           setIsLoading(false);
           history.push(`/browser-history/${browserHistory.nanoId}`);
         }
