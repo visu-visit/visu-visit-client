@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 
-import { MouseEvent, useEffect, useRef, useState } from "react";
+import { MouseEvent, useLayoutEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { forceManyBody, forceLink, forceSimulation, forceX, forceY } from "d3-force";
@@ -51,8 +51,10 @@ const colorScaleOrdinal = scaleOrdinal(URL_TRANSITION_TYPES, schemePaired);
 const INITIAL_CLICKED_NODE = { top: 0, left: 0, node: {} as IDomainNode };
 
 export default function DirectedGraph() {
-  const domainNodes = useSelector<RootState, IDomainNode[]>(({ history }) => history.domainNodes);
-  const totalVisits = useSelector<RootState, IVisit[]>(({ history }) => history.totalVisits);
+  const domainNodes = useSelector<RootState, IDomainNode[]>(
+    ({ history }) => history.data.domainNodes,
+  );
+  const totalVisits = useSelector<RootState, IVisit[]>(({ history }) => history.data.totalVisits);
   const [clickedNode, setClickedNode] = useState<IClickedNode>(INITIAL_CLICKED_NODE);
   const [isNodeDetailVisible, setIsNodeDetailVisible] = useState<boolean>(false);
   const [zoomTransform, setZoomTransform] = useState<ZoomTransform | null>(null);
@@ -63,7 +65,7 @@ export default function DirectedGraph() {
     setIsNodeDetailVisible(false);
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!svgRef.current) {
       return;
     }
