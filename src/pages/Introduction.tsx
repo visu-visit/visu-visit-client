@@ -70,8 +70,10 @@ const Label = styled.label`
   }
 `;
 
-const Input = styled.input`
-  display: none;
+const Notification = styled.div`
+  margin-top: 10px;
+  font-size: 20px;
+  color: lightcoral;
 `;
 
 export default function Introduction() {
@@ -124,7 +126,8 @@ export default function Introduction() {
         ) : (
           <Label htmlFor="historyFileInput">
             UPLOAD
-            <Input
+            <input
+              style={{ display: "none" }}
               id="historyFileInput"
               ref={inputRef}
               onChange={handleUploadFile}
@@ -133,6 +136,10 @@ export default function Introduction() {
             />
           </Label>
         )}
+
+        <Notification>
+          WE DO NOT COLLECT your History File UNLESS you CLICK SAVE Button
+        </Notification>
 
         {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
       </Section>
