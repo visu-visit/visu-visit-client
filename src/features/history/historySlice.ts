@@ -80,7 +80,9 @@ export const historySlice = createSlice({
       );
 
       if (targetIndex !== -1) {
-        state.data.domainNodes[targetIndex] = { ...action.payload };
+        const targetNode = state.data.domainNodes[targetIndex];
+
+        state.data.domainNodes[targetIndex] = { ...targetNode, ...action.payload };
       }
     },
 
