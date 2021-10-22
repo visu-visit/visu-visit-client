@@ -71,9 +71,8 @@ const Label = styled.label`
 `;
 
 const Notification = styled.div`
-  margin-top: 10px;
-  font-size: 20px;
-  color: lightcoral;
+  margin: 10px;
+  font-size: 15px;
 `;
 
 export default function Introduction() {
@@ -137,11 +136,13 @@ export default function Introduction() {
           </Label>
         )}
 
-        <Notification>
-          WE DO NOT COLLECT your History File UNLESS you CLICK SAVE Button
-        </Notification>
-
-        {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+        {errorMessage ? (
+          <ErrorMessage>{errorMessage}</ErrorMessage>
+        ) : (
+          <Notification>
+            *WE DO NOT COLLECT your History File UNLESS you CLICK SAVE Button
+          </Notification>
+        )}
       </Section>
     </Wrapper>
   );
