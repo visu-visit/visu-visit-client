@@ -9,7 +9,8 @@ import ErrorMessage from "../components/shared/ErrorMessage";
 import Title from "../components/shared/Title";
 import { postHistoryFile } from "../api";
 import Loading from "../components/shared/Loading";
-import flexCenter from "../styles/flexCenter";
+import flexCenter from "../styles/mixins/flexCenter";
+import FlexBox from "../components/shared/FlexBox";
 
 const Wrapper = styled.div`
   ${flexCenter}
@@ -59,7 +60,6 @@ const Label = styled.label`
   font-weight: 200;
   width: 200px;
   height: 50px;
-  background: ${({ theme }) => theme.gradient.orange};
   border-radius: 10px;
   box-shadow: ${({ theme }) => theme.boxShadow};
   font-size: 20px;
@@ -68,6 +68,10 @@ const Label = styled.label`
     border: 1px solid gray;
     cursor: pointer;
   }
+`;
+
+const Upload = styled(Label)`
+  background: ${({ theme }) => theme.gradient.orange};
 `;
 
 const Notification = styled.div`
@@ -104,7 +108,7 @@ export default function Introduction() {
           setErrorMessage(response.error.message);
           setIsLoading(false);
         }
-      } catch (error: any) {
+      } catch {
         setErrorMessage("히스토리 파일 업로드에 실패했습니다.");
         setIsLoading(false);
       }
@@ -120,21 +124,27 @@ export default function Introduction() {
           HOW & WHERE TO GET BROWSER HISTORY FILE ?
         </SLink>
 
-        {isLoading ? (
-          <Loading />
-        ) : (
-          <Label htmlFor="historyFileInput">
-            UPLOAD
-            <input
-              style={{ display: "none" }}
-              id="historyFileInput"
-              ref={inputRef}
-              onChange={handleUploadFile}
-              type="file"
-              name="historyFile"
-            />
-          </Label>
-        )}
+        <FlexBox>
+          {isLoading ? (
+            <Loading />
+          ) : (
+            <Upload htmlFor="historyFileInput">
+              UPLOAD
+              <input
+                style={{ display: "none" }}
+                id="historyFileInput"
+                ref={inputRef}
+                onChange={handleUploadFile}
+                type="file"
+                name="historyFile"
+              />
+            </Upload>
+          )}
+
+          <Link to="/browser-history/sample">
+            <Label>SEE SAMPLE</Label>
+          </Link>
+        </FlexBox>
 
         {errorMessage ? (
           <ErrorMessage>{errorMessage}</ErrorMessage>
