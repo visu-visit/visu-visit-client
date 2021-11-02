@@ -189,20 +189,16 @@ export default function NodeDetail({ node, handleClose }: NodeDetailProps) {
     setMemo(value);
   };
 
-  const handleClick = ({ target }: MouseEvent) => {
-    if (!(target instanceof HTMLButtonElement)) {
-      return;
-    }
-
-    if (target.dataset.name === "memo") {
+  const handleClick = ({ target: { dataset } }: any) => {
+    if (dataset.name === "memo") {
       setIsMemoModifying(true);
-    } else if (target.dataset.name === "color") {
-      circleSelected.attr("fill", target.dataset!.color as string);
-      dispatch(changeNodeColor({ domainName, color: target.dataset.color as string }));
-    } else if (target.dataset.name === "save") {
+    } else if (dataset.name === "color") {
+      circleSelected.attr("fill", dataset!.color as string);
+      dispatch(changeNodeColor({ domainName, color: dataset.color as string }));
+    } else if (dataset.name === "save") {
       dispatch(changeNodeMemo({ memo, domainName }));
       handleClose();
-    } else if (target.dataset.name === "delete") {
+    } else if (dataset.name === "delete") {
       dispatch(deleteNode({ domainName }));
       handleClose();
     } else {
