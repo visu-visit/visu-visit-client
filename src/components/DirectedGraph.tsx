@@ -7,7 +7,7 @@ import { forceManyBody, forceLink, forceSimulation, forceX, forceY } from "d3-fo
 import { schemePaired } from "d3-scale-chromatic";
 import { scaleOrdinal } from "d3-scale";
 import { select } from "d3-selection";
-import { D3ZoomEvent, zoom, ZoomTransform } from "d3-zoom";
+import { D3ZoomEvent, zoom } from "d3-zoom";
 import { drag } from "d3-drag";
 
 import { RootState } from "../app/store";
@@ -57,7 +57,7 @@ export default function DirectedGraph() {
   const totalVisits = useSelector<RootState, IVisit[]>(({ history }) => history.data.totalVisits);
   const [clickedNode, setClickedNode] = useState<IClickedNode>(INITIAL_CLICKED_NODE);
   const [isNodeDetailVisible, setIsNodeDetailVisible] = useState<boolean>(false);
-  const [zoomTransform, setZoomTransform] = useState<ZoomTransform | null>(null);
+  const [zoomTransform, setZoomTransform] = useState<string | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const dispatch = useDispatch();
 
@@ -79,15 +79,12 @@ export default function DirectedGraph() {
     const container = svg.append("svg:g");
 
     if (zoomTransform) {
-      container.attr(
-        "transform",
-        `translate(${zoomTransform.x},${zoomTransform.y}) scale(${zoomTransform.k})`,
-      );
+      container.attr("transform", zoomTransform);
     }
 
     const handleZoom = (event: D3ZoomEvent<SVGSVGElement, SVGSVGElement>) => {
       container.attr("transform", event.transform.toString());
-      setZoomTransform(event.transform);
+      setZoomTransform(event.transform.toString());
     };
     const zoomBehavior = zoom<SVGSVGElement, SVGSVGElement>()
       .extent([
@@ -175,18 +172,6 @@ export default function DirectedGraph() {
       .attr("height", (node) => getNodeRadius(node))
       .attr("x", (node) => -getNodeRadius(node) / 2)
       .attr("y", (node) => -getNodeRadius(node) / 2);
-
-    nodeGroup
-      .append("circle")
-      .attr("fill", "red")
-      .attr("opacity", 0.5)
-      .attr("r", (node) => (node.memo ? getNodeRadius(node) / 10 : 0))
-      .attr("width", 20)
-      .attr("height", 20)
-      .attr(
-        "transform",
-        (node) => `translate(${getNodeRadius(node) / 2} -${getNodeRadius(node) / 2})`,
-      );
 
     const handleContextMenu = (event: MouseEvent, domainNode: IDomainNode) => {
       event.preventDefault();

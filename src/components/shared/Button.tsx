@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import flexCenter from "../../styles/flexCenter";
+import flexCenter from "../../styles/mixins/flexCenter";
 
 const Button = styled.button`
   ${flexCenter}

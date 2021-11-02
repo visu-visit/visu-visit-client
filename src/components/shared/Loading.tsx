@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import flexCenter from "../../styles/flexCenter";
+import flexCenter from "../../styles/mixins/flexCenter";
 
 const Wrapper = styled.div<{ center: boolean }>`
   ${flexCenter}

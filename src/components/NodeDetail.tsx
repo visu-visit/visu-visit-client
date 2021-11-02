@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, MouseEvent, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { MdDeleteForever } from "react-icons/md";
@@ -11,7 +11,7 @@ import { FaCheck } from "react-icons/fa";
 import { select } from "d3-selection";
 import { RootState } from "../app/store";
 import { changeNodeColor, changeNodeMemo, deleteNode } from "../features/history/historySlice";
-import flexCenter from "../styles/flexCenter";
+import flexCenter from "../styles/mixins/flexCenter";
 import { IDomainNode, IVisit } from "../types/history";
 import { NODE_COLORS } from "../constants/history";
 import Tooltip from "./shared/Tooltip";
@@ -189,16 +189,20 @@ export default function NodeDetail({ node, handleClose }: NodeDetailProps) {
     setMemo(value);
   };
 
-  const handleClick = ({ target: { dataset } }: any) => {
-    if (dataset.name === "memo") {
+  const handleClick = ({ target }: MouseEvent) => {
+    if (!(target instanceof HTMLButtonElement)) {
+      return;
+    }
+
+    if (target.dataset.name === "memo") {
       setIsMemoModifying(true);
-    } else if (dataset.name === "color") {
-      circleSelected.attr("fill", dataset.color);
-      dispatch(changeNodeColor({ domainName, color: dataset.color }));
-    } else if (dataset.name === "save") {
+    } else if (target.dataset.name === "color") {
+      circleSelected.attr("fill", target.dataset!.color as string);
+      dispatch(changeNodeColor({ domainName, color: target.dataset.color as string }));
+    } else if (target.dataset.name === "save") {
       dispatch(changeNodeMemo({ memo, domainName }));
       handleClose();
-    } else if (dataset.name === "delete") {
+    } else if (target.dataset.name === "delete") {
       dispatch(deleteNode({ domainName }));
       handleClose();
     } else {
