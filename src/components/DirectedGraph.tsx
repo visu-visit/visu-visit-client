@@ -164,7 +164,11 @@ export default function DirectedGraph() {
 
     nodeGroup
       .append("image")
-      .attr("xlink:href", ({ name }) => `https://api.faviconkit.com/${new URL(name).hostname}/128`)
+      .attr(
+        "xlink:href",
+        ({ name }) =>
+          `https://www.google.com/s2/favicons?sz=128&domain_url=${new URL(name).hostname}`,
+      )
       .on("error", ({ target }) => {
         select(target).attr("xlink:href", "/images/graph/defaultNodeFavicon.png");
       })

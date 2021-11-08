@@ -182,8 +182,10 @@ export default function NodeDetail({ node, handleClose }: NodeDetailProps) {
     event.target.src = DEFAULT_DOMAIN_IMAGE_URL;
   };
 
+  // https://www.google.com/s2/favicons?sz=64&domain_url=yahoo.com
+
   const getFaviconUrl = (srcUrl: string) =>
-    `https://api.faviconkit.com/${new URL(srcUrl).hostname}/128`;
+    `https://www.google.com/s2/favicons?sz=64&domain_url=${srcUrl}`;
 
   const handleChangeMemo = ({ target: { value } }: ChangeEvent<HTMLTextAreaElement>) => {
     setMemo(value);
