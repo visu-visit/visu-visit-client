@@ -37,27 +37,27 @@
 - 브라우저의 히스토리 파일을 업로드하면 그 파일의 데이터를 토대로 웹 방문 기록을 방향 그래프로 만들어 보여줍니다.
 - 사용자의 로컬 컴퓨터에 저장된 브라우저 히스토리 파일을 업로드하면 그것을 방향 그래프로 보여줍니다. 이때 그래프 전체를 드래그시켜 이동하거나, 줌인, 줌아웃이 가능합니다.
     
-    ![main](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/ca5a8a94-cd38-4892-a588-91841f3065a5/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20211102%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20211102T130848Z&X-Amz-Expires=86400&X-Amz-Signature=12cf987de896373d3f2347830d07ca70fbb3b1586a37e73422bc4cf25c82c7ca&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22Untitled.png%22)
+    ![main](public/images/instruction/main.png)
     
 - 특정 기간이나 특정 이름이 포함된 도메인의 방문 기록을 필터링하여 볼 수 있습니다.
     
-    ![instruction-filter.gif](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/8614af41-d332-4825-901a-b91b641686ca/instruction-filter.gif?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20211102%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20211102T130942Z&X-Amz-Expires=86400&X-Amz-Signature=9e81e669a8bac5c38974ec1648401759fe63d1d649ec7a69abfb9e61c4b44eaf&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22instruction-filter.gif%22)
+    ![instruction-filter.gif](public/images/instruction/instruction-filter.gif)
     
 - 노드를 드래그하여 고정시키거나, 더블클릭하여 고정을 해제할 수 있습니다.
     
-    ![instruction-double-click.gif](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/e2ea215e-62e2-4e9d-b48d-00ce96cd0c49/instruction-double-click.gif?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20211102%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20211102T130954Z&X-Amz-Expires=86400&X-Amz-Signature=6ef3a436afb52924e7daab568cdf6a4dedc56f6b628ca85beea1ddc49ec3635c&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22instruction-double-click.gif%22)
+    ![instruction-double-click.gif](public/images/instruction/instruction-double-click.gif)
     
 - 노드를 삭제할 수 있습니다.
     
-    ![instruction-delete.gif](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/9c4f199d-60b4-4dd3-9200-3625c82a9075/instruction-delete.gif?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20211102%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20211102T131009Z&X-Amz-Expires=86400&X-Amz-Signature=97903498e2c384a7664e0d86d1c0e0f38954a29e7167fa5d50871e65cea3ed9b&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22instruction-delete.gif%22)
+    ![instruction-delete.gif](public/images/instruction/instruction-delete.gif)
     
 - 노드를 우클릭하면 해당 노드(도메인)에 관련된 상세 정보를 볼 수 있습니다. 상세 정보 화면에서 노드의 색깔을 바꾸거나 노드에 메모를 남길 수 있습니다.
     
-    ![instruction-detail.gif](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/c8a6e95d-7bea-4e71-a940-2ab3dcf9e68d/instruction-detail.gif?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20211102%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20211102T131020Z&X-Amz-Expires=86400&X-Amz-Signature=9e2a71073bfaff3852fccb47f3524b9ea6cfd4e7232f9f744fc2d387b0cbc324&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22instruction-detail.gif%22)
+    ![instruction-detail.gif](public/images/instruction/instruction-detail.gif)
     
 - 지금까지 편집했던 그래프의 모양과 정보를 서버 저장하고 url로 불러올 수 있습니다.
     
-    ![instruction-save-share.gif](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/8e6bb971-3a87-46d0-9610-1d8e84bb9fbe/instruction-save-share.gif?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20211102%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20211102T131034Z&X-Amz-Expires=86400&X-Amz-Signature=b19ea99bce33663f70a50c6af01e40e9d853aaf6c6166503bb2b1be2b2b61954&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22instruction-save-share.gif%22)
+    ![instruction-save-share.gif](public/images/instruction/instruction-save-share.gif)
 
 
 ### 배포 주소
