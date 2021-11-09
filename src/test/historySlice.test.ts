@@ -1,8 +1,7 @@
-import { IDomainNode } from "../types/history.d";
 /* eslint-disable no-undef */
-
+import { IDomainNode } from "../types/history.d";
 import {
-  initialState,
+  INITIAL_STATE,
   updateBrowserHistory,
   changeNodePosition,
   resetNodePosition,
@@ -15,15 +14,15 @@ import mockBrowserHistory from "./mock/mockBrowserHistory";
 
 describe("TEST feature/historySlice.ts", () => {
   it("test historyReducer's initial state", () => {
-    expect(store.getState().history).toEqual(initialState);
+    expect(store.getState().history).toEqual(INITIAL_STATE);
   });
 
   it("test action: updateBrowserHistory,", () => {
     store.dispatch(updateBrowserHistory(mockBrowserHistory));
 
-    expect(store.getState().history).toEqual(mockBrowserHistory);
+    expect(store.getState().history.data).toEqual(mockBrowserHistory);
 
-    store.dispatch(updateBrowserHistory(initialState));
+    store.dispatch(updateBrowserHistory(INITIAL_STATE.data));
   });
 
   it("test action: changeNodePosition,", () => {
@@ -44,7 +43,7 @@ describe("TEST feature/historySlice.ts", () => {
 
     const targetNode = store
       .getState()
-      .history.domainNodes.find(({ name }) => name === positionChangedNode.name);
+      .history.data.domainNodes.find(({ name }) => name === positionChangedNode.name);
 
     expect(targetNode).toEqual(positionChangedNode);
   });
@@ -67,7 +66,7 @@ describe("TEST feature/historySlice.ts", () => {
 
     const targetNode = store
       .getState()
-      .history.domainNodes.find(({ name }) => name === nodeWillBeReset.name);
+      .history.data.domainNodes.find(({ name }) => name === nodeWillBeReset.name);
 
     const resetNode: IDomainNode = { ...nodeWillBeReset };
 
@@ -87,7 +86,11 @@ describe("TEST feature/historySlice.ts", () => {
 
     const targetNode = store
       .getState()
-      .history.domainNodes.find(({ name }) => name === actionPayload.domainName);
+      .history.data.domainNodes.find(({ name }) => name === actionPayload.domainName);
+
+    if (targetNode === undefined) {
+      throw new Error("Couldn't find targetNode");
+    }
 
     expect(targetNode.name).toEqual(actionPayload.domainName);
     expect(targetNode.memo).toEqual(actionPayload.memo);
@@ -103,7 +106,11 @@ describe("TEST feature/historySlice.ts", () => {
 
     const targetNode = store
       .getState()
-      .history.domainNodes.find(({ name }) => name === actionPayload.domainName);
+      .history.data.domainNodes.find(({ name }) => name === actionPayload.domainName);
+
+    if (targetNode === undefined) {
+      throw new Error("Couldn't find targetNode");
+    }
 
     expect(targetNode.name).toEqual(actionPayload.domainName);
     expect(targetNode.color).toEqual(actionPayload.color);
@@ -118,7 +125,7 @@ describe("TEST feature/historySlice.ts", () => {
 
     const targetNodeIndex = store
       .getState()
-      .history.domainNodes.findIndex(({ name }) => name === actionPayload.domainName);
+      .history.data.domainNodes.findIndex(({ name }) => name === actionPayload.domainName);
 
     expect(targetNodeIndex).toEqual(-1);
   });
